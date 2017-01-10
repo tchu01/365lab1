@@ -11,4 +11,28 @@ public class Payment {
         this.creditCardNumber = creditCardNumber;
         this.amount = amount;
     }
+
+    public String getDate() {
+        return date;
+    }
+
+    public long getCreditCardNumber() {
+        return creditCardNumber;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setCreditCardNumber(long creditCardNumber) {
+        this.creditCardNumber = creditCardNumber;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
 }

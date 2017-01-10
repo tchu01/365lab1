@@ -4,13 +4,17 @@ import java.util.HashMap;
  * Created by timothy on 1/7/17.
  */
 public class OwnershipCollection {
-    private HashMap<Customer, Ownership> coll;
+    private HashMap<Integer, Ownership> coll;
 
     public OwnershipCollection() {
         coll = new HashMap<>();
     }
 
-    public void addOwnership(Customer customer, Ownership ownership) {
-
+    public void addOwnership(int customerId, Ownership ownership) {
+        if(!coll.containsKey(customerId)) {
+            coll.put(customerId, ownership);
+        } else {
+            System.out.println("ERROR: Collection already contains ownership with that id.");
+        }
     }
 }

@@ -6,17 +6,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Ownership {
-    private Customer customer;
+    private int customerId;
     private CreditCardCollection cards;
     private boolean current = true;
 
-    public Ownership(Customer customer, CreditCardCollection cards) {
-        this.customer = customer;
-        this.cards = cards;
+    public Ownership(int customerId) {
+        this.customerId = customerId;
+        this.cards = new CreditCardCollection();
     }
 
-    public Customer getCust() {
-        return customer;
+    public int getCustomerId() {
+        return customerId;
     }
 
     public CreditCardCollection getCards() {
@@ -27,8 +27,8 @@ public class Ownership {
         return current;
     }
 
-    public void setCust(Customer customer) {
-        this.customer = customer;
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
     }
 
     public void setCards(CreditCardCollection cards) {

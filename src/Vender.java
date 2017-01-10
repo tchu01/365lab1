@@ -2,9 +2,9 @@
  * Created by timothy on 1/7/17.
  */
 public class Vender {
-    private static long uid = 0;
+    private static int uid = 0;
 
-    private long id;
+    private int id;
     private String name;
     private String location;
 
@@ -14,7 +14,7 @@ public class Vender {
         this.location = location;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 

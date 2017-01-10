@@ -9,4 +9,8 @@ public class TransactionCollection {
     public TransactionCollection() {
         this.coll = new ArrayList<>();
     }
+
+    public void addTransaction(Transaction transaction) {
+        this.coll.add(transaction);
+    }
 }

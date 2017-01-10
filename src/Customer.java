@@ -2,10 +2,10 @@
  * Created by timothy on 1/7/17.
  */
 public class Customer {
-    private static long uid = 0;
+    private static int uid = 0;
 
     private int ssn;
-    private long id;
+    private int id;
     private String name;
     private String address;
     private long phone;
@@ -22,7 +22,7 @@ public class Customer {
         return ssn;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 

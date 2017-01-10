@@ -38,4 +38,8 @@ public class Ownership {
     public void setCurrent(boolean current) {
         this.current = current;
     }
+
+    public void addCard(CreditCard card) {
+        cards.addCard(card);
+    }
 }

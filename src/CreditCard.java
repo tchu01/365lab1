@@ -6,20 +6,20 @@ public class CreditCard {
         VISA, MC, AMEX, DISCOVER
     }
 
-    private long number;
+    private String number;
     private CardType type;
     private double limit;
     private double balance;
     private boolean active = false;
 
-    public CreditCard(long number, CardType type, double limit, double balance) {
+    public CreditCard(String number, CardType type, double limit, double balance) {
         this.number = number;
         this.type = type;
         this.limit = limit;
         this.balance = balance;
     }
 
-    public long getNumber() {
+    public String getNumber() {
         return number;
     }
 
@@ -39,7 +39,7 @@ public class CreditCard {
         return active;
     }
 
-    public void setNumber(long number) {
+    public void setNumber(String number) {
         this.number = number;
     }
 

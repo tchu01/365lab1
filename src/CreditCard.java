@@ -60,4 +60,6 @@ public class CreditCard {
     }
 
     public void addBalance(double amount) { this.balance += amount; }
+
+    public void subtractBalance(double amount) { this.balance -= amount; }
 }

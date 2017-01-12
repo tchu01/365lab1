@@ -1,4 +1,5 @@
 import java.util.HashSet;
+import java.util.Scanner;
 
 /**
  * Created by timothy on 1/7/17.
@@ -45,6 +46,9 @@ public class Main {
         //#8 Allow a customer to pay off credit card
         makePayment(oc, pc, "01/20/2017", card1.getNumber(), 400.00);
         System.out.println("HERE");
+
+        //CLI for querying
+        Scanner scan = new Scanner(System.in);
     }
 
     public static Customer createAndAddCustomer(CustomerCollection cc, int ssn, String name, String address,
@@ -127,7 +131,7 @@ public class Main {
 
             HashSet<Integer> ids = oc.getCollByNumber().get(cardNumber);
             for(Integer i : ids) {
-                oc.getCollById().get(i).getCards().getColl().get(cardNumber).addBalance(amount);
+                oc.getCollById().get(i).getCards().getColl().get(cardNumber).subtractBalance(amount);
             }
         } else {
             System.out.println("Cannot make payment, no card with that number.");

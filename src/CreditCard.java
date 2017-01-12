@@ -58,4 +58,6 @@ public class CreditCard {
     public void setActive(boolean active) {
         this.active = active;
     }
+
+    public void addBalance(double amount) { this.balance += amount; }
 }

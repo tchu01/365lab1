@@ -6,12 +6,14 @@ public class Transaction {
     private int customerId;
     private String creditCardNumber;
     private int venderId;
+    private double amount;
 
-    public Transaction(String date, int customerId, String creditCardNumber, int venderId) {
+    public Transaction(String date, int customerId, String creditCardNumber, int venderId, double amount) {
         this.date = date;
         this.customerId = customerId;
         this.creditCardNumber = creditCardNumber;
         this.venderId = venderId;
+        this.amount = amount;
     }
 
     public String getDate() {
@@ -30,6 +32,10 @@ public class Transaction {
         return venderId;
     }
 
+    public double getAmount() {
+        return amount;
+    }
+
     public void setDate(String date) {
         this.date = date;
     }
@@ -46,5 +52,7 @@ public class Transaction {
         this.venderId = venderId;
     }
 
-
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
 }

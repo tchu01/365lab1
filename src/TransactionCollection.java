@@ -13,4 +13,8 @@ public class TransactionCollection {
     public void addTransaction(Transaction transaction) {
         this.coll.add(transaction);
     }
+
+    public ArrayList<Transaction> getColl() {
+        return coll;
+    }
 }

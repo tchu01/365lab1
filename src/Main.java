@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
 
@@ -49,6 +51,31 @@ public class Main {
 
         //CLI for querying
         Scanner scan = new Scanner(System.in);
+        System.out.println("Query options: q - quit | customerId <id> | customerSsn <ssn>");
+        System.out.println("cardById <id> | cardBySsn <ssn> | cardByNumber <number>");
+        System.out.println("transaction <start> <stop>");
+        boolean cont = true;
+        while(cont) {
+            String next = scan.nextLine();
+            if(next.equals("q")) {
+                cont = false;
+            }
+            String split[] = next.split(" ");
+            if(split[0].equals("customerId")) {
+                queryCustomerById(cc, Integer.parseInt(split[1]));
+            } else if(split[0].equals("customerSsn")) {
+                queryCustomerBySsn(cc, Integer.parseInt(split[1]));
+            } else if(split[0].equals("cardById")) {
+                queryCardsById(oc, Integer.parseInt(split[1]));
+            } else if(split[0].equals("cardBySsn")) {
+                queryCardsBySsn(cc, oc, Integer.parseInt(split[1]));
+            } else if(split[0].equals("cardByNumber")) {
+                queryCardByNumber(cc, oc, split[1]);
+            } else if(split[0].equals("transaction")) {
+                queryTranscations(tc, split[1], split[2]);
+            }
+
+        }
     }
 
     public static Customer createAndAddCustomer(CustomerCollection cc, int ssn, String name, String address,
@@ -135,6 +162,72 @@ public class Main {
             }
         } else {
             System.out.println("Cannot make payment, no card with that number.");
+        }
+    }
+
+    public static void queryCustomerById(CustomerCollection cc, int id) {
+        Customer c = cc.getCollById().get(id);
+        System.out.println("Customer: " + c.getName());
+    }
+
+    public static void queryCustomerBySsn(CustomerCollection cc, int ssn) {
+        Customer c = cc.getCollBySsn().get(ssn);
+        System.out.println("Customer: " + c.getName());
+    }
+
+    public static void queryCardsById(OwnershipCollection oc, int id) {
+        Ownership o = oc.getCollById().get(id);
+        HashMap<String, CreditCard> cards = o.getCards().getColl();
+
+        for(CreditCard card : cards.values()) {
+            System.out.println("Card #: " + card.getNumber() + " card balance: " + card.getBalance() +
+                    " card limit: " + card.getLimit() + " card type: " + card.getType() + " card active: " +
+                    card.isActive());
+        }
+    }
+
+    public static void queryTranscations(TransactionCollection tc, String start, String end) {
+        for(Transaction t : tc.getColl()) {
+            String date = t.getDate();
+            int i = date.compareTo(start);
+            i = date.compareTo(end);
+            if(date.compareTo(start) >= 1 && date.compareTo(end) <= -1) {
+                System.out.println("Transaction date: " + t.getDate() + " card number: " + t.getCreditCardNumber() +
+                        " amount: " + t.getAmount() + " customer id: " + t.getCustomerId() +
+                        " venderid: " + t.getVenderId());
+            }
+        }
+    }
+
+    public static void queryCardsBySsn(CustomerCollection cc, OwnershipCollection oc, int ssn) {
+        Customer c = cc.getCollBySsn().get(ssn);
+        Ownership o = oc.getCollById().get(c.getId());
+        HashMap<String, CreditCard> cards = o.getCards().getColl();
+
+        for(CreditCard card : cards.values()) {
+            System.out.println("Card #: " + card.getNumber() + " card balance: " + card.getBalance() +
+                    " card limit: " + card.getLimit() + " card type: " + card.getType() + " card active: " +
+                    card.isActive());
+        }
+    }
+
+    public static void queryCardByNumber(CustomerCollection cc, OwnershipCollection oc, String number) {
+        HashSet<Integer> ids = oc.getCollByNumber().get(number);
+        ArrayList<String> names = new ArrayList<>();
+        boolean first = true;
+        for(Integer i : ids) {
+            if(first) {
+                first = false;
+                CreditCard card = oc.getCollById().get(i).getCards().getColl().get(number);
+                System.out.println("Card #: " + card.getNumber() + " card balance: " + card.getBalance() +
+                        " card limit: " + card.getLimit() + " card type: " + card.getType() + " card active: " +
+                        card.isActive());
+            }
+            names.add(cc.getCollById().get(i).getName());
+        }
+        System.out.println("Cardholders:");
+        for(String name : names) {
+            System.out.println(name);
         }
     }
 }

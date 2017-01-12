@@ -8,9 +8,9 @@ public class Customer {
     private int id;
     private String name;
     private String address;
-    private long phone;
+    private String phone;
 
-    public Customer(int ssn, String name, String address, long phone) {
+    public Customer(int ssn, String name, String address, String phone) {
         this.ssn = ssn;
         this.id = uid++;
         this.name = name;
@@ -34,7 +34,7 @@ public class Customer {
         return address;
     }
 
-    public long getPhone() {
+    public String getPhone() {
         return phone;
     }
 
@@ -50,7 +50,7 @@ public class Customer {
         this.address = address;
     }
 
-    public void setPhone(long phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 }

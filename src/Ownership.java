@@ -39,7 +39,7 @@ public class Ownership {
         this.current = current;
     }
 
-    public void addCard(CreditCard card) {
-        cards.addCard(card);
+    public void addCreditCard(CreditCard card) {
+        cards.addCreditCard(card);
     }
 }

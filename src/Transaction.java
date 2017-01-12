@@ -4,10 +4,10 @@
 public class Transaction {
     private String date;
     private int customerId;
-    private long creditCardNumber;
+    private String creditCardNumber;
     private int venderId;
 
-    public Transaction(String date, int customerId, long creditCardNumber, int venderId) {
+    public Transaction(String date, int customerId, String creditCardNumber, int venderId) {
         this.date = date;
         this.customerId = customerId;
         this.creditCardNumber = creditCardNumber;
@@ -22,7 +22,7 @@ public class Transaction {
         return customerId;
     }
 
-    public long getCreditCardNumber() {
+    public String getCreditCardNumber() {
         return creditCardNumber;
     }
 
@@ -38,7 +38,7 @@ public class Transaction {
         this.customerId = customerId;
     }
 
-    public void setCreditCardNumber(long creditCardNumber) {
+    public void setCreditCardNumber(String creditCardNumber) {
         this.creditCardNumber = creditCardNumber;
     }
 

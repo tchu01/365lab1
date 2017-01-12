@@ -10,11 +10,15 @@ public class CreditCardCollection {
         this.coll = new HashMap<>();
     }
 
-    public void addCard(CreditCard card) {
+    public void addCreditCard(CreditCard card) {
         if(!coll.containsKey(card.getNumber())) {
             coll.put(card.getNumber(), card);
         } else {
             System.out.println("ERROR: Collection already contains card with that number.");
         }
+    }
+
+    public HashMap<String, CreditCard> getColl() {
+        return coll;
     }
 }

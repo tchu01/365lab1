@@ -3,10 +3,10 @@
  */
 public class Payment {
     private String date;
-    private long creditCardNumber;
+    private String creditCardNumber;
     private double amount;
 
-    public Payment(String date, long creditCardNumber, double amount) {
+    public Payment(String date, String creditCardNumber, double amount) {
         this.date = date;
         this.creditCardNumber = creditCardNumber;
         this.amount = amount;
@@ -16,7 +16,7 @@ public class Payment {
         return date;
     }
 
-    public long getCreditCardNumber() {
+    public String getCreditCardNumber() {
         return creditCardNumber;
     }
 
@@ -28,7 +28,7 @@ public class Payment {
         this.date = date;
     }
 
-    public void setCreditCardNumber(long creditCardNumber) {
+    public void setCreditCardNumber(String creditCardNumber) {
         this.creditCardNumber = creditCardNumber;
     }
 

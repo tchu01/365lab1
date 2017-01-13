@@ -139,16 +139,16 @@ public class Main {
                                                      double limit, double balance, int customerId) {
         CreditCard card = new CreditCard(number, type, limit, balance);
         Ownership ownership = null;
-        if(!oc.getCollById().containsKey(customer.getId())) {
-            ownership = new Ownership(customer.getId());
+        if(!oc.getCollById().containsKey(customerId)) {
+            ownership = new Ownership(customerId);
             ownership.addCreditCard(card);
-            oc.addOwnership(customer.getId(), ownership);
+            oc.addOwnership(customerId, ownership);
         } else {
-            ownership = oc.getCollById().get(customer.getId());
+            ownership = oc.getCollById().get(customerId);
             ownership.addCreditCard(card);
         }
 
-        oc.addReverseOwnership(number, customer.getId());
+        oc.addReverseOwnership(number, customerId);
 
         return card;
     }

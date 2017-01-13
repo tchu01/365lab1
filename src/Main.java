@@ -20,19 +20,19 @@ public class Main {
 
         //#2 Create a new credit card for an existing customer
         CreditCard card1 = addCreditCardToCustomer(oc,"1234123412341234", CreditCard.CardType.AMEX,
-                3000.00, 0.0, customer1);
+                3000.00, 0.0, customer1.getId());
 
         //#3 Issue a card duplicate for additional customer
         Customer customer2 = createAndAddCustomer(cc, 234567890, "Helen Phan", "2 Grand Ave",
                 "1234567890");
         CreditCard card2 = addCreditCardToCustomer(oc, card1.getNumber(), card1.getType(), card1.getLimit(),
-                card1.getBalance(), customer2);
+                card1.getBalance(), customer2.getId());
 
         //#4 Cancel a credit card
         Customer customer3 = createAndAddCustomer(cc, 345678901, "John Doe", "3 Grand Ave",
                 "9876543210");
         CreditCard card3 = addCreditCardToCustomer(oc, "4321432143214321", CreditCard.CardType.DISCOVER,
-                4000.00, 0.0, customer3);
+                4000.00, 0.0, customer3.getId());
         cancelCreditCard(oc, card3.getNumber());
 
         //#5 Activate a credit card
@@ -49,33 +49,83 @@ public class Main {
         makePayment(oc, pc, "01/20/2017", card1.getNumber(), 400.00);
         System.out.println("HERE");
 
-        //CLI for querying
+        //CLI for interacting with database
         Scanner scan = new Scanner(System.in);
-        System.out.println("Query options: q - quit | customerId <id> | customerSsn <ssn>");
-        System.out.println("cardById <id> | cardBySsn <ssn> | cardByNumber <number>");
-        System.out.println("transaction <start> <stop>");
-        boolean cont = true;
-        while(cont) {
+        printOptions();
+        while(true) {
             String next = scan.nextLine();
-            if(next.equals("q")) {
-                cont = false;
-            }
             String split[] = next.split(" ");
-            if(split[0].equals("customerId")) {
-                queryCustomerById(cc, Integer.parseInt(split[1]));
-            } else if(split[0].equals("customerSsn")) {
-                queryCustomerBySsn(cc, Integer.parseInt(split[1]));
-            } else if(split[0].equals("cardById")) {
-                queryCardsById(oc, Integer.parseInt(split[1]));
-            } else if(split[0].equals("cardBySsn")) {
-                queryCardsBySsn(cc, oc, Integer.parseInt(split[1]));
-            } else if(split[0].equals("cardByNumber")) {
-                queryCardByNumber(cc, oc, split[1]);
-            } else if(split[0].equals("transaction")) {
-                queryTranscations(tc, split[1], split[2]);
+            switch (split[0]) {
+                case "q":
+                    System.out.println("Goodbye");
+                    return;
+                case "newCustomer":
+                    String name = split[1] + " " + split[2];
+                    int ssn = Integer.parseInt(split[3]);
+                    String phone = split[4];
+                    String address = getAddress(split);
+                    createAndAddCustomer(cc, ssn, name, address, phone);
+                    break;
+                case "addCreditCardToCustomer":
+                    break;
+                case "cancelCreditCard":
+                    break;
+                case "activateCreditCard":
+                    break;
+                case "newVender":
+                    break;
+                case "newTransaction":
+                    break;
+                case "newPayment":
+                    break;
+                case "customerId":
+                    queryCustomerById(cc, Integer.parseInt(split[1]));
+                    break;
+                case "customerSsn":
+                    queryCustomerBySsn(cc, Integer.parseInt(split[1]));
+                    break;
+                case "cardById":
+                    queryCardsById(oc, Integer.parseInt(split[1]));
+                    break;
+                case "cardBySsn":
+                    queryCardsBySsn(cc, oc, Integer.parseInt(split[1]));
+                    break;
+                case "cardByNumber":
+                    queryCardByNumber(cc, oc, split[1]);
+                    break;
+                case "transaction":
+                    queryTranscations(tc, split[1], split[2]);
+                    break;
             }
-
         }
+    }
+
+    public static void printOptions() {
+        System.out.println("Options for customizing database:");
+        System.out.println("1) newCustomer <first name> <last name> <ssn> <phone> <address>");
+        System.out.println("2) addCreditCardToCustomer <card number> <card type> <limit> <balance> <customer id>");
+        System.out.println("3) cancelCreditCard <card number>");
+        System.out.println("4) activateCreditCard <card number>");
+        System.out.println("5) newVender <name> <location>");
+        System.out.println("6) newTransaction <date> <customer id> <card number> <vender id> <amount>");
+        System.out.println("7) newPayment <date> <card number> <amount>");
+
+        System.out.println("Options for querying database:");
+        System.out.println("1) customerId <customer id>");
+        System.out.println("2) customerSsn <ssn>");
+        System.out.println("3) cardById <customer id>");
+        System.out.println("4) cardBySsn <ssn>");
+        System.out.println("5) cardByNumber <card number>");
+        System.out.println("6) transaction <start date range> <stop date range>");
+    }
+
+    public static String getAddress(String[] split) {
+        String result = "";
+        for(int i = 5; i < split.length; i++) {
+            result += split[i] + " ";
+        }
+
+        return result.trim();
     }
 
     public static Customer createAndAddCustomer(CustomerCollection cc, int ssn, String name, String address,
@@ -86,7 +136,7 @@ public class Main {
     }
 
     public static CreditCard addCreditCardToCustomer(OwnershipCollection oc, String number, CreditCard.CardType type,
-                                                     double limit, double balance, Customer customer) {
+                                                     double limit, double balance, int customerId) {
         CreditCard card = new CreditCard(number, type, limit, balance);
         Ownership ownership = null;
         if(!oc.getCollById().containsKey(customer.getId())) {
@@ -186,19 +236,6 @@ public class Main {
         }
     }
 
-    public static void queryTranscations(TransactionCollection tc, String start, String end) {
-        for(Transaction t : tc.getColl()) {
-            String date = t.getDate();
-            int i = date.compareTo(start);
-            i = date.compareTo(end);
-            if(date.compareTo(start) >= 1 && date.compareTo(end) <= -1) {
-                System.out.println("Transaction date: " + t.getDate() + " card number: " + t.getCreditCardNumber() +
-                        " amount: " + t.getAmount() + " customer id: " + t.getCustomerId() +
-                        " venderid: " + t.getVenderId());
-            }
-        }
-    }
-
     public static void queryCardsBySsn(CustomerCollection cc, OwnershipCollection oc, int ssn) {
         Customer c = cc.getCollBySsn().get(ssn);
         Ownership o = oc.getCollById().get(c.getId());
@@ -228,6 +265,19 @@ public class Main {
         System.out.println("Cardholders:");
         for(String name : names) {
             System.out.println(name);
+        }
+    }
+
+    public static void queryTranscations(TransactionCollection tc, String start, String end) {
+        for(Transaction t : tc.getColl()) {
+            String date = t.getDate();
+            int i = date.compareTo(start);
+            i = date.compareTo(end);
+            if(date.compareTo(start) >= 1 && date.compareTo(end) <= -1) {
+                System.out.println("Transaction date: " + t.getDate() + " card number: " + t.getCreditCardNumber() +
+                        " amount: " + t.getAmount() + " customer id: " + t.getCustomerId() +
+                        " venderid: " + t.getVenderId());
+            }
         }
     }
 }

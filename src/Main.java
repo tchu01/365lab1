@@ -60,17 +60,16 @@ public class Main {
                     System.out.println("Goodbye");
                     return;
                 case "newCustomer":
-                    String name = split[1] + " " + split[2];
-                    int ssn = Integer.parseInt(split[3]);
-                    String phone = split[4];
-                    String address = getAddress(split);
-                    createAndAddCustomer(cc, ssn, name, address, phone);
+                    newCustomer(cc, split);
                     break;
                 case "addCreditCardToCustomer":
+                    newCardForCustomer(oc, split);
                     break;
                 case "cancelCreditCard":
+                    cancelCard(oc, split);
                     break;
                 case "activateCreditCard":
+                    activateCard(oc, split);
                     break;
                 case "newVender":
                     break;
@@ -94,7 +93,7 @@ public class Main {
                     queryCardByNumber(cc, oc, split[1]);
                     break;
                 case "transaction":
-                    queryTranscations(tc, split[1], split[2]);
+                    queryTransactions(tc, split[1], split[2]);
                     break;
             }
         }
@@ -119,6 +118,15 @@ public class Main {
         System.out.println("6) transaction <start date range> <stop date range>");
     }
 
+    public static void newCustomer(CustomerCollection cc, String[] split) {
+        String name = split[1] + " " + split[2];
+        int ssn = Integer.parseInt(split[3]);
+        String phone = split[4];
+        String address = getAddress(split);
+        Customer c = createAndAddCustomer(cc, ssn, name, address, phone);
+        System.out.println("Successfully added new customer with id: " + c.getId());
+    }
+
     public static String getAddress(String[] split) {
         String result = "";
         for(int i = 5; i < split.length; i++) {
@@ -133,6 +141,28 @@ public class Main {
         Customer customer = new Customer(ssn, name, address, phone);
         cc.addCustomer(customer);
         return customer;
+    }
+
+    public static void newCardForCustomer(OwnershipCollection oc, String[] split) {
+        if(split.length == 5) {
+            addCreditCardToCustomer(oc, split[1], getType(split[2]), Double.parseDouble(split[3]),
+                    Double.parseDouble(split[4]), Integer.parseInt(split[5]));
+            System.out.println("Successfully added credit card to customer");
+        } else {
+            System.out.println("Incorrect number of arguments");
+        }
+    }
+
+    public static CreditCard.CardType getType(String type) {
+        if(type.equals("VISA")) {
+            return CreditCard.CardType.VISA;
+        } else if(type.equals("MC")) {
+            return CreditCard.CardType.MC;
+        } else if(type.equals("AMEX")) {
+            return CreditCard.CardType.AMEX;
+        } else {
+            return CreditCard.CardType.DISCOVER;
+        }
     }
 
     public static CreditCard addCreditCardToCustomer(OwnershipCollection oc, String number, CreditCard.CardType type,
@@ -153,6 +183,15 @@ public class Main {
         return card;
     }
 
+    public static void cancelCard(OwnershipCollection oc, String[] split) {
+        if(split.length == 2) {
+            cancelCreditCard(oc, split[1]);
+            System.out.println("Successfully canceled credit card");
+        } else {
+            System.out.println("Incorrect number of arguments");
+        }
+    }
+
     public static void cancelCreditCard(OwnershipCollection oc, String number) {
         if(oc.getCollByNumber().containsKey(number)) {
             HashSet<Integer> ids = oc.getCollByNumber().get(number);
@@ -161,6 +200,15 @@ public class Main {
             }
         } else {
             System.out.println("Cannot cancel credit card, no credit card with that number");
+        }
+    }
+
+    public static void activateCard(OwnershipCollection oc, String[] split) {
+        if(split.length == 2) {
+            activateCreditCard(oc, split[1]);
+            System.out.println("Successfully activated crdit card");
+        } else {
+            System.out.println("Incorrect number of arguments");
         }
     }
 
@@ -268,7 +316,7 @@ public class Main {
         }
     }
 
-    public static void queryTranscations(TransactionCollection tc, String start, String end) {
+    public static void queryTransactions(TransactionCollection tc, String start, String end) {
         for(Transaction t : tc.getColl()) {
             String date = t.getDate();
             int i = date.compareTo(start);

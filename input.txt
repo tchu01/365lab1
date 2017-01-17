@@ -1,0 +1,70 @@
+Part 1: Database set up
+newCustomer Timothy Chu 123456789 1234567890 1 Grand Ave
+newCustomer Helen Phan 987654321 2345678901 2 Grand Ave
+newCustomer John Doe 234567890 3456789012 3 Grand Ave
+
+addCreditCardToCustomer 1234123412341234 AMEX 3000.00 0.00 0
+addCreditCardToCustomer 4321432143214321 DISCOVER 2000.00 0.00 2
+
+addCreditCardToCustomer 1234123412341234 AMEX 3000.00 0.00 1
+
+cancelCreditCard 4321432143214321
+
+activateCreditCard 1234123412341234
+
+newVender Costco 4 Grand Ave
+
+newTransaction 2017/01/15 0 1234123412341234 0 500.00
+
+newPayment 2017/01/16 1234123412341234 400.00
+
+
+
+Part 2: Querying
+customerId 0
+customerSsn 123456789
+
+cardById 0
+cardBySsn 123456789
+
+cardByNumber 1234123412341234
+
+transaction 2017/01/15 2017/01/20 1234123412341234
+
+
+
+/*
+//#1 Create a new customer
+Customer customer1 = createAndAddCustomer(cc, 123456789, "Timothy Chu", "1 Grand Ave",
+        "1234567890");
+
+//#2 Create a new credit card for an existing customer
+CreditCard card1 = addCreditCardToCustomer(oc,"1234123412341234", CreditCard.CardType.AMEX,
+        3000.00, 0.0, customer1.getId());
+
+//#3 Issue a card duplicate for additional customer
+Customer customer2 = createAndAddCustomer(cc, 234567890, "Helen Phan", "2 Grand Ave",
+        "1234567890");
+CreditCard card2 = addCreditCardToCustomer(oc, card1.getNumber(), card1.getType(), card1.getLimit(),
+        card1.getBalance(), customer2.getId());
+
+//#4 Cancel a credit card
+Customer customer3 = createAndAddCustomer(cc, 345678901, "John Doe", "3 Grand Ave",
+        "9876543210");
+CreditCard card3 = addCreditCardToCustomer(oc, "4321432143214321", CreditCard.CardType.DISCOVER,
+        4000.00, 0.0, customer3.getId());
+cancelCreditCard(oc, card3.getNumber());
+
+//#5 Activate a credit card
+activateCreditCard(oc, "1234123412341234");
+
+//#6 Add a new vender
+Vender vender1 = createAndAddVender(vc, "Costco", "4 Grand Ave");
+
+//#7 Create a new transaction
+makeTransaction(oc, tc, "01/19/2017", customer1.getId(), card1.getNumber(), vender1.getId(),
+        500.00);
+
+//#8 Allow a customer to pay off credit card
+makePayment(oc, pc, "01/20/2017", card1.getNumber(), 400.00);
+*/

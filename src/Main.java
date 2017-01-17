@@ -14,41 +14,6 @@ public class Main {
         TransactionCollection tc = new TransactionCollection();
         PaymentCollection pc = new PaymentCollection();
 
-        //#1 Create a new customer
-        Customer customer1 = createAndAddCustomer(cc, 123456789, "Timothy Chu", "1 Grand Ave",
-                "1234567890");
-
-        //#2 Create a new credit card for an existing customer
-        CreditCard card1 = addCreditCardToCustomer(oc,"1234123412341234", CreditCard.CardType.AMEX,
-                3000.00, 0.0, customer1.getId());
-
-        //#3 Issue a card duplicate for additional customer
-        Customer customer2 = createAndAddCustomer(cc, 234567890, "Helen Phan", "2 Grand Ave",
-                "1234567890");
-        CreditCard card2 = addCreditCardToCustomer(oc, card1.getNumber(), card1.getType(), card1.getLimit(),
-                card1.getBalance(), customer2.getId());
-
-        //#4 Cancel a credit card
-        Customer customer3 = createAndAddCustomer(cc, 345678901, "John Doe", "3 Grand Ave",
-                "9876543210");
-        CreditCard card3 = addCreditCardToCustomer(oc, "4321432143214321", CreditCard.CardType.DISCOVER,
-                4000.00, 0.0, customer3.getId());
-        cancelCreditCard(oc, card3.getNumber());
-
-        //#5 Activate a credit card
-        activateCreditCard(oc, "1234123412341234");
-
-        //#6 Add a new vender
-        Vender vender1 = createAndAddVender(vc, "Costco", "4 Grand Ave");
-
-        //#7 Create a new transaction
-        makeTransaction(oc, tc, "01/19/2017", customer1.getId(), card1.getNumber(), vender1.getId(),
-                500.00);
-
-        //#8 Allow a customer to pay off credit card
-        makePayment(oc, pc, "01/20/2017", card1.getNumber(), 400.00);
-        System.out.println("HERE");
-
         //CLI for interacting with database
         Scanner scan = new Scanner(System.in);
         printOptions();
@@ -72,10 +37,13 @@ public class Main {
                     activateCard(oc, split);
                     break;
                 case "newVender":
+                    newVender(vc, split);
                     break;
                 case "newTransaction":
+                    newTransaction(oc, tc, split);
                     break;
                 case "newPayment":
+                    newPayment(oc, pc, split);
                     break;
                 case "customerId":
                     queryCustomerById(cc, Integer.parseInt(split[1]));
@@ -93,7 +61,9 @@ public class Main {
                     queryCardByNumber(cc, oc, split[1]);
                     break;
                 case "transaction":
-                    queryTransactions(tc, split[1], split[2]);
+                    queryTransactions(tc, split[1], split[2], split[3]);
+                    break;
+                default:
                     break;
             }
         }
@@ -107,7 +77,7 @@ public class Main {
         System.out.println("4) activateCreditCard <card number>");
         System.out.println("5) newVender <name> <location>");
         System.out.println("6) newTransaction <date> <customer id> <card number> <vender id> <amount>");
-        System.out.println("7) newPayment <date> <card number> <amount>");
+        System.out.println("7) newPayment <date> <card number> <amount>\n");
 
         System.out.println("Options for querying database:");
         System.out.println("1) customerId <customer id>");
@@ -115,21 +85,21 @@ public class Main {
         System.out.println("3) cardById <customer id>");
         System.out.println("4) cardBySsn <ssn>");
         System.out.println("5) cardByNumber <card number>");
-        System.out.println("6) transaction <start date range> <stop date range>");
+        System.out.println("6) transaction <start date range> <stop date range> <card number>");
     }
 
     public static void newCustomer(CustomerCollection cc, String[] split) {
         String name = split[1] + " " + split[2];
         int ssn = Integer.parseInt(split[3]);
         String phone = split[4];
-        String address = getAddress(split);
+        String address = getAddress(split, 5);
         Customer c = createAndAddCustomer(cc, ssn, name, address, phone);
         System.out.println("Successfully added new customer with id: " + c.getId());
     }
 
-    public static String getAddress(String[] split) {
+    public static String getAddress(String[] split, int loc) {
         String result = "";
-        for(int i = 5; i < split.length; i++) {
+        for(int i = loc; i < split.length; i++) {
             result += split[i] + " ";
         }
 
@@ -144,7 +114,7 @@ public class Main {
     }
 
     public static void newCardForCustomer(OwnershipCollection oc, String[] split) {
-        if(split.length == 5) {
+        if(split.length == 6) {
             addCreditCardToCustomer(oc, split[1], getType(split[2]), Double.parseDouble(split[3]),
                     Double.parseDouble(split[4]), Integer.parseInt(split[5]));
             System.out.println("Successfully added credit card to customer");
@@ -206,7 +176,7 @@ public class Main {
     public static void activateCard(OwnershipCollection oc, String[] split) {
         if(split.length == 2) {
             activateCreditCard(oc, split[1]);
-            System.out.println("Successfully activated crdit card");
+            System.out.println("Successfully activated credit card");
         } else {
             System.out.println("Incorrect number of arguments");
         }
@@ -223,10 +193,25 @@ public class Main {
         }
     }
 
+    public static void newVender(VenderCollection vc, String[] split) {
+        Vender v = createAndAddVender(vc, split[1], getAddress(split, 2));
+        System.out.println("Successfully added new vender with id: " + v.getId());
+    }
+
     public static Vender createAndAddVender(VenderCollection vc, String name, String location) {
         Vender vender = new Vender(name, location);
         vc.addVender(vender);
         return vender;
+    }
+
+    public static void newTransaction(OwnershipCollection oc, TransactionCollection tc, String[] split) {
+        if(split.length == 6) {
+            makeTransaction(oc, tc, split[1], Integer.parseInt(split[2]), split[3], Integer.parseInt(split[4]),
+                    Double.parseDouble(split[5]));
+            System.out.println("Successfully added new transaction");
+        } else {
+            System.out.println("Incorrect number of arguments");
+        }
     }
 
     public static void makeTransaction(OwnershipCollection oc, TransactionCollection tc, String date, int customerId,
@@ -248,6 +233,15 @@ public class Main {
         }
     }
 
+    public static void newPayment(OwnershipCollection oc, PaymentCollection pc, String[] split) {
+        if(split.length == 4) {
+            makePayment(oc, pc, split[1], split[2], Double.parseDouble(split[3]));
+            System.out.println("Successfully added new payment");
+        } else {
+            System.out.println("Incorrect number of arguments");
+        }
+    }
+
     public static void makePayment(OwnershipCollection oc, PaymentCollection pc, String date, String cardNumber,
                                    double amount) {
         if(oc.getCollByNumber().containsKey(cardNumber)) {
@@ -263,68 +257,93 @@ public class Main {
         }
     }
 
+
+
+
     public static void queryCustomerById(CustomerCollection cc, int id) {
-        Customer c = cc.getCollById().get(id);
-        System.out.println("Customer: " + c.getName());
+        if(cc.getCollById().containsKey(id)) {
+            Customer c = cc.getCollById().get(id);
+            System.out.println("Customer: " + c.getName());
+        } else {
+            System.out.println("QUERY-ERROR: No customer by that id");
+        }
     }
 
     public static void queryCustomerBySsn(CustomerCollection cc, int ssn) {
-        Customer c = cc.getCollBySsn().get(ssn);
-        System.out.println("Customer: " + c.getName());
+        if(cc.getCollBySsn().containsKey(ssn)) {
+            Customer c = cc.getCollBySsn().get(ssn);
+            System.out.println("Customer: " + c.getName());
+        } else {
+            System.out.println("QUERY-ERROR: No customer by that ssn");
+        }
     }
 
     public static void queryCardsById(OwnershipCollection oc, int id) {
-        Ownership o = oc.getCollById().get(id);
-        HashMap<String, CreditCard> cards = o.getCards().getColl();
+        if(oc.getCollById().containsKey(id)) {
+            Ownership o = oc.getCollById().get(id);
+            HashMap<String, CreditCard> cards = o.getCards().getColl();
 
-        for(CreditCard card : cards.values()) {
-            System.out.println("Card #: " + card.getNumber() + " card balance: " + card.getBalance() +
-                    " card limit: " + card.getLimit() + " card type: " + card.getType() + " card active: " +
-                    card.isActive());
-        }
-    }
-
-    public static void queryCardsBySsn(CustomerCollection cc, OwnershipCollection oc, int ssn) {
-        Customer c = cc.getCollBySsn().get(ssn);
-        Ownership o = oc.getCollById().get(c.getId());
-        HashMap<String, CreditCard> cards = o.getCards().getColl();
-
-        for(CreditCard card : cards.values()) {
-            System.out.println("Card #: " + card.getNumber() + " card balance: " + card.getBalance() +
-                    " card limit: " + card.getLimit() + " card type: " + card.getType() + " card active: " +
-                    card.isActive());
-        }
-    }
-
-    public static void queryCardByNumber(CustomerCollection cc, OwnershipCollection oc, String number) {
-        HashSet<Integer> ids = oc.getCollByNumber().get(number);
-        ArrayList<String> names = new ArrayList<>();
-        boolean first = true;
-        for(Integer i : ids) {
-            if(first) {
-                first = false;
-                CreditCard card = oc.getCollById().get(i).getCards().getColl().get(number);
+            for (CreditCard card : cards.values()) {
                 System.out.println("Card #: " + card.getNumber() + " card balance: " + card.getBalance() +
                         " card limit: " + card.getLimit() + " card type: " + card.getType() + " card active: " +
                         card.isActive());
             }
-            names.add(cc.getCollById().get(i).getName());
-        }
-        System.out.println("Cardholders:");
-        for(String name : names) {
-            System.out.println(name);
+        } else {
+            System.out.println("QUERY-ERROR: No cards for that id");
         }
     }
 
-    public static void queryTransactions(TransactionCollection tc, String start, String end) {
+    public static void queryCardsBySsn(CustomerCollection cc, OwnershipCollection oc, int ssn) {
+        if(cc.getCollBySsn().containsKey(ssn)) {
+            Customer c = cc.getCollBySsn().get(ssn);
+            Ownership o = oc.getCollById().get(c.getId());
+            HashMap<String, CreditCard> cards = o.getCards().getColl();
+
+            for (CreditCard card : cards.values()) {
+                System.out.println("Card #: " + card.getNumber() + " card balance: " + card.getBalance() +
+                        " card limit: " + card.getLimit() + " card type: " + card.getType() + " card active: " +
+                        card.isActive());
+            }
+        } else {
+            System.out.println("QUERY-ERROR: No cards for that ssn");
+        }
+    }
+
+    public static void queryCardByNumber(CustomerCollection cc, OwnershipCollection oc, String number) {
+        if(oc.getCollByNumber().containsKey(number)) {
+            HashSet<Integer> ids = oc.getCollByNumber().get(number);
+            ArrayList<String> names = new ArrayList<>();
+            boolean first = true;
+            for (Integer i : ids) {
+                if (first) {
+                    first = false;
+                    CreditCard card = oc.getCollById().get(i).getCards().getColl().get(number);
+                    System.out.println("Card #: " + card.getNumber() + " card balance: " + card.getBalance() +
+                            " card limit: " + card.getLimit() + " card type: " + card.getType() + " card active: " +
+                            card.isActive());
+                }
+                names.add(cc.getCollById().get(i).getName());
+            }
+            System.out.println("Cardholders:");
+            for (String name : names) {
+                System.out.println(name);
+            }
+        } else {
+            System.out.println("QUERY-ERROR: No card by that number");
+        }
+    }
+
+    public static void queryTransactions(TransactionCollection tc, String start, String end, String number) {
         for(Transaction t : tc.getColl()) {
-            String date = t.getDate();
-            int i = date.compareTo(start);
-            i = date.compareTo(end);
-            if(date.compareTo(start) >= 1 && date.compareTo(end) <= -1) {
-                System.out.println("Transaction date: " + t.getDate() + " card number: " + t.getCreditCardNumber() +
-                        " amount: " + t.getAmount() + " customer id: " + t.getCustomerId() +
-                        " venderid: " + t.getVenderId());
+            if(number.equals(t.getCreditCardNumber())) {
+                String date = t.getDate();
+                int i = date.compareTo(start);
+                i = date.compareTo(end);
+                if (date.compareTo(start) >= 0 && date.compareTo(end) <= 0) {
+                    System.out.println("Transaction date: " + t.getDate() + " card number: " + t.getCreditCardNumber() +
+                            " amount: " + t.getAmount() + " customer id: " + t.getCustomerId() +
+                            " venderid: " + t.getVenderId());
+                }
             }
         }
     }

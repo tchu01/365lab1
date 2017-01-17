@@ -1,20 +1,26 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by timothy on 1/7/17.
  */
 public class TransactionCollection {
-    private ArrayList<Transaction> coll;
+    private HashMap<String, ArrayList<Transaction>> coll;
 
     public TransactionCollection() {
-        this.coll = new ArrayList<>();
+        this.coll = new HashMap<>();
     }
 
-    public void addTransaction(Transaction transaction) {
-        this.coll.add(transaction);
+    public void addTransaction(String number,Transaction transaction) {
+        if(this.coll.containsKey(number)) {
+            this.coll.get(number).add(transaction);
+        } else {
+            this.coll.put(number, new ArrayList<>());
+            this.coll.get(number).add(transaction);
+        }
     }
 
-    public ArrayList<Transaction> getColl() {
+    public HashMap<String, ArrayList<Transaction>> getColl() {
         return coll;
     }
 }

@@ -219,7 +219,7 @@ public class Main {
         if(oc.getCollById().containsKey(customerId)) {
             if(oc.getCollByNumber().containsKey(cardNumber)) {
                 Transaction transaction = new Transaction(date, customerId, cardNumber, venderId, amount);
-                tc.addTransaction(transaction);
+                tc.addTransaction(cardNumber, transaction);
 
                 HashSet<Integer> ids = oc.getCollByNumber().get(cardNumber);
                 for(Integer i : ids) {
@@ -334,7 +334,7 @@ public class Main {
     }
 
     public static void queryTransactions(TransactionCollection tc, String start, String end, String number) {
-        for(Transaction t : tc.getColl()) {
+        for(Transaction t : tc.getColl().get(number)) {
             if(number.equals(t.getCreditCardNumber())) {
                 String date = t.getDate();
                 int i = date.compareTo(start);
